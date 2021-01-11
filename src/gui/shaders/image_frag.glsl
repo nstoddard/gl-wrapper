@@ -4,5 +4,8 @@ in vec4 Color;
 uniform sampler2D tex;
 
 void main() {
-  writeColor2D(Color * texture(tex, UV));
+  vec4 tex_color = Color * texture(tex, UV);
+  // Premultiplied alpha
+  tex_color.rgb *= tex_color.a;
+  writeColor2D(tex_color);
 }

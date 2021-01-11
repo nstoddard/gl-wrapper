@@ -6,8 +6,7 @@ edition = "2018"
 
 [dependencies]
 log = { version = "0.4.11", features = ["std"] }
-# TODO: when 0.18 is released, update
-cgmath = { git = "https://github.com/rustgd/cgmath", features = ["serde"] }
+cgmath = { version = "0.18", features = ["serde"] }
 serde = { version = "1.0.117", features = ["derive"] }
 uid = "0.1.4"
 glow = "0.6.1"

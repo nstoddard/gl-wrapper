@@ -139,9 +139,9 @@ out vec2 Uv;
 out vec4 Color;
 
 void main() {
-    gl_Position = matrix * vec4(pos, 0.0, 1.0);
-    Uv = uv;
-    Color = color;
+  gl_Position = matrix * vec4(pos, 0.0, 1.0);
+  Uv = uv;
+  Color = color;
 }";
 
 const RENDER_FRAG_SHADER: &str = "
@@ -154,7 +154,7 @@ out vec4 FragColor;
 
 void main() {
   vec4 tex_color = texture(tex, Uv);
- FragColor = vec4(Color.rgb, tex_color.r);
+  FragColor = vec4(Color.rgb, tex_color.r);
   // Premultiplied alpha
   FragColor.rgb *= FragColor.a;
 }";

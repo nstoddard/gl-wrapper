@@ -211,3 +211,21 @@ impl F32Uniform {
         }
     }
 }
+
+
+/// An instance of `Uniforms` that contains no data.
+pub struct EmptyUniforms {}
+
+pub struct EmptyUniformsGl {}
+
+impl Uniforms for EmptyUniforms {
+    type GlUniforms = EmptyUniformsGl;
+
+    fn update(&self, _context: &GlContext, _gl_uniforms: &Self::GlUniforms) {}
+}
+
+impl GlUniforms for EmptyUniformsGl {
+    fn new(_context: &GlContext, _program: GlProgramId) -> Self {
+        EmptyUniformsGl {}
+    }
+}

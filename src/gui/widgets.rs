@@ -754,10 +754,12 @@ pub struct Selector<T: Copy + PartialEq> {
 }
 
 impl<T: Copy + PartialEq> Selector<T> {
-    pub fn new(options: Vec<(String, T)>, selected_option: Option<(String, T)>) -> Box<Self> {
+    pub fn new(options: Vec<(String, T)>, selected_option: Option<usize>) -> Box<Self> {
+        if let Some(selected_option) = selected_option {
+            assert!(selected_option < options.len());
+        }
         Box::new(Self {
-            selected_option: selected_option
-                .map(|selected_option| options.iter().position(|x| &selected_option == x).unwrap()),
+            selected_option,
             options,
             id: WidgetId::new(),
         })

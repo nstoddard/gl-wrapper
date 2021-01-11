@@ -153,6 +153,34 @@ impl<V: Vertex> MeshBuilder<V, Triangles> {
 }
 
 #[derive(Copy, Clone)]
+pub struct TriangleStrip;
+
+impl Primitive for TriangleStrip {
+    const AS_GL: u32 = glow::TRIANGLE_STRIP;
+}
+
+impl<V: Vertex> MeshBuilder<V, TriangleStrip> {
+    /// Adds an index to the mesh.
+    pub fn triangle_strip_index(&mut self, a: MeshIndex) {
+        self.indices.push(a);
+    }
+}
+
+#[derive(Copy, Clone)]
+pub struct TriangleFan;
+
+impl Primitive for TriangleFan {
+    const AS_GL: u32 = glow::TRIANGLE_FAN;
+}
+
+impl<V: Vertex> MeshBuilder<V, TriangleFan> {
+    /// Adds an index to the mesh.
+    pub fn triangle_fan_index(&mut self, a: MeshIndex) {
+        self.indices.push(a);
+    }
+}
+
+#[derive(Copy, Clone)]
 pub struct Lines;
 
 impl Primitive for Lines {
@@ -164,6 +192,34 @@ impl<V: Vertex> MeshBuilder<V, Lines> {
     pub fn line(&mut self, a: MeshIndex, b: MeshIndex) {
         self.indices.push(a);
         self.indices.push(b);
+    }
+}
+
+#[derive(Copy, Clone)]
+pub struct LineStrip;
+
+impl Primitive for LineStrip {
+    const AS_GL: u32 = glow::LINE_STRIP;
+}
+
+impl<V: Vertex> MeshBuilder<V, LineStrip> {
+    /// Adds an index to the mesh.
+    pub fn line_strip_index(&mut self, a: MeshIndex) {
+        self.indices.push(a);
+    }
+}
+
+#[derive(Copy, Clone)]
+pub struct LineLoop;
+
+impl Primitive for LineLoop {
+    const AS_GL: u32 = glow::LINE_LOOP;
+}
+
+impl<V: Vertex> MeshBuilder<V, LineLoop> {
+    /// Adds an index to the mesh.
+    pub fn line_loop_index(&mut self, a: MeshIndex) {
+        self.indices.push(a);
     }
 }
 
