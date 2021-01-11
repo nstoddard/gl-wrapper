@@ -76,6 +76,25 @@ pub struct MeshBuilder<V: Vertex, P: Primitive> {
     phantom: PhantomData<(V, P)>,
 }
 
+impl<V: Vertex> MeshBuilder<V, Triangles> {
+    // TODO: consider entirely replacing MeshBuilder with lyon
+    #[cfg(feature = "lyon_tessellation")]
+    pub fn from_lyon_vertex_buffers(
+        vertex_buffers: lyon_tessellation::VertexBuffers<V, MeshIndex>,
+    ) -> Self {
+        let mut vertex_data = vec![];
+        for vert in &vertex_buffers.vertices {
+            vert.add_to_mesh(&mut |data| vertex_data.push(data));
+        }
+        Self {
+            vertex_data,
+            indices: vertex_buffers.indices,
+            next_index: vertex_buffers.vertices.len() as u16,
+            phantom: PhantomData,
+        }
+    }
+}
+
 impl<V: Vertex, P: Primitive> MeshBuilder<V, P> {
     pub fn new() -> Self {
         MeshBuilder { vertex_data: vec![], indices: vec![], next_index: 0, phantom: PhantomData }

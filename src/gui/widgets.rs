@@ -758,11 +758,7 @@ impl<T: Copy + PartialEq> Selector<T> {
         if let Some(selected_option) = selected_option {
             assert!(selected_option < options.len());
         }
-        Box::new(Self {
-            selected_option,
-            options,
-            id: WidgetId::new(),
-        })
+        Box::new(Self { selected_option, options, id: WidgetId::new() })
     }
 
     pub fn selected_option(&self) -> Option<T> {

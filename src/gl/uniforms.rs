@@ -212,7 +212,6 @@ impl F32Uniform {
     }
 }
 
-
 /// An instance of `Uniforms` that contains no data.
 pub struct EmptyUniforms {}
 
