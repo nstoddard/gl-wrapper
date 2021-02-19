@@ -3,6 +3,8 @@ mod gl;
 #[cfg(not(target_arch = "wasm32"))]
 mod glfw;
 mod gui;
+#[cfg(not(target_arch = "wasm32"))]
+mod screenshot;
 
 pub use gl::*;
 pub use gui::*;

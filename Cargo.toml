@@ -19,6 +19,7 @@ lyon_tessellation = { version = "0.17.1", optional = true }
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 glfw = "0.41.0"
 image = "0.23.12"
+chrono = "0.4.19"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen = "0.2.68"
