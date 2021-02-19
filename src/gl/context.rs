@@ -92,8 +92,11 @@ impl GlContext {
     #[cfg(target_arch = "wasm32")]
     pub fn new(canvas_id: &str) -> Result<(Self, ScreenSurface), &str> {
         let document = window().unwrap().document().unwrap();
-        let canvas =
-            document.get_element_by_id(canvas_id).unwrap().dyn_into::<HtmlCanvasElement>().unwrap();
+        let canvas = document
+            .get_element_by_id(canvas_id)
+            .expect("Unable to find canvas element")
+            .dyn_into::<HtmlCanvasElement>()
+            .unwrap();
         let context = glow::Context::from_webgl2_context(
             canvas
                 .get_context_with_context_options(
