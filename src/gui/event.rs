@@ -287,7 +287,7 @@ pub fn event_from_glfw(
         glfw::WindowEvent::FramebufferSize(width, height) => {
             Some(Event::WindowResized(vec2(width as u32, height as u32)))
         }
-        glfw::WindowEvent::Scroll(_x, y) => Some(Event::Scroll(y.signum())),
+        glfw::WindowEvent::Scroll(_x, y) => Some(Event::Scroll(-y.signum())),
         glfw::WindowEvent::Focus(true) => Some(Event::FocusGained),
         glfw::WindowEvent::Focus(false) => Some(Event::FocusLost),
         _ => None,
