@@ -222,7 +222,7 @@ impl ScreenSurface {
         }
     }
 
-    pub fn close(&mut self) {
+    pub fn close_window(&mut self) {
         self.inner.set_should_close(true);
     }
 
