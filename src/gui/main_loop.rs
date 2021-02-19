@@ -3,6 +3,8 @@ use collect_mac::*;
 use fnv::*;
 use wasm_stopwatch::*;
 
+use crate::gl::*;
+
 // TODO: see if these `cfg`s can be avoided/merged
 #[cfg(target_arch = "wasm32")]
 use log::*;
@@ -19,8 +21,6 @@ use wasm_bindgen::JsCast;
 #[cfg(target_arch = "wasm32")]
 use web_sys::{window, KeyboardEvent, MouseEvent, WheelEvent};
 
-#[cfg(not(target_arch = "wasm32"))]
-use crate::gl::*;
 #[cfg(not(target_arch = "wasm32"))]
 use glfw::Context;
 
@@ -263,7 +263,8 @@ pub trait App {
     /// Called when the web page is being closed.
     fn on_close(&mut self) {}
 
-    #[cfg(not(target_arch = "wasm32"))]
+    /// Returns a references to the app's `ScreenSurface`.
+    // TODO: remove this if possible
     fn screen_surface(&mut self) -> &mut ScreenSurface;
 }
 
