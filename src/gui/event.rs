@@ -8,7 +8,7 @@ use web_sys::{window, KeyboardEvent, MouseEvent};
 pub enum Event {
     KeyDown(Key),
     KeyUp(Key),
-    CharEntered(char), // TODO: implement this for JS
+    CharEntered(char),
     MouseDown(MouseButton, Point2<i32>),
     MouseUp(MouseButton, Point2<i32>),
     MouseMove {
