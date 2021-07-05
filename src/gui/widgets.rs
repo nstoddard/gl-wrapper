@@ -845,19 +845,16 @@ impl<T: Copy + PartialEq> Component for Selector<T> {
     fn update(&mut self, theme: &Theme, events: Vec<Event>) -> Self::Res {
         let mut just_selected = false;
         for event in events {
-            match event {
-                Event::MouseDown(MouseButton::Left, pos) => {
-                    let entry = pos.y / theme.font.advance_y() as i32;
-                    assert!(
-                        entry >= 0 && (entry as usize) < self.options.len(),
-                        "entry {} out of range (max={})",
-                        entry,
-                        self.options.len()
-                    );
-                    self.selected_option = Some(entry as usize);
-                    just_selected = true;
-                }
-                _ => (),
+            if let Event::MouseDown(MouseButton::Left, pos) = event {
+                let entry = pos.y / theme.font.advance_y() as i32;
+                assert!(
+                    entry >= 0 && (entry as usize) < self.options.len(),
+                    "entry {} out of range (max={})",
+                    entry,
+                    self.options.len()
+                );
+                self.selected_option = Some(entry as usize);
+                just_selected = true;
             }
         }
 
@@ -964,6 +961,10 @@ pub struct TextEntry {
 }
 
 impl TextEntry {
+    /// Creates a new `TextEntry`.
+    ///
+    /// If `continuous_updates` is enabled, the widget sends an update each time the text is
+    /// changed, and isn't cleared when enter is pressed.
     pub fn new(
         start_text: &str,
         placeholder_text: &str,
@@ -998,15 +999,15 @@ impl TextEntry {
         }
     }
 
-    fn cur_text_mutable(&mut self) -> String {
+    /// Returns the current contents of the TextEntry, and clears the contents unless
+    /// `continuous_updates` is enabled.
+    fn take_cur_text(&mut self) -> String {
         if self.text.is_empty() && self.use_placeholder_text_if_empty {
             self.placeholder_text.clone()
+        } else if self.continuous_updates {
+            self.text.clone()
         } else {
-            if self.continuous_updates {
-                self.text.clone()
-            } else {
-                mem::replace(&mut self.text, "".to_owned())
-            }
+            mem::take(&mut self.text)
         }
     }
 }
@@ -1030,7 +1031,7 @@ impl Component for TextEntry {
                         self.caret_pos = (self.caret_pos + 1).min(self.text.len() as i32)
                     }
                     "Enter" => {
-                        res = Some(self.cur_text_mutable());
+                        res = Some(self.take_cur_text());
                         self.caret_pos = 0;
                     }
                     _ => (),

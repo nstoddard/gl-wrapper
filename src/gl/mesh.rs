@@ -155,6 +155,12 @@ impl<V: Vertex, P: Primitive> MeshBuilder<V, P> {
     }
 }
 
+impl<V: Vertex, P: Primitive> Default for MeshBuilder<V, P> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[derive(Copy, Clone)]
 pub struct Triangles;
 

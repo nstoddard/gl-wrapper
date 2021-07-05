@@ -73,7 +73,7 @@ impl GlContext {
         window_mode: WindowMode,
         grab_cursor: bool,
         debug_context: bool,
-    ) -> Result<(Self, ScreenSurface, EventReceiver), Box<&'static str>> {
+    ) -> Result<(Self, ScreenSurface, EventReceiver), &'static str> {
         let mut glfw = get_glfw();
         let (mut window, event_receiver) =
             create_window_inner(&mut glfw, &window_mode, grab_cursor, debug_context);
@@ -90,7 +90,7 @@ impl GlContext {
     ///
     /// Returns an error if the context couldn't be created.
     #[cfg(target_arch = "wasm32")]
-    pub fn new(canvas_id: &str) -> Result<(Self, ScreenSurface), &str> {
+    pub fn new(canvas_id: &str) -> Result<(Self, ScreenSurface), &'static str> {
         let document = window().unwrap().document().unwrap();
         let canvas = document
             .get_element_by_id(canvas_id)

@@ -64,12 +64,12 @@ impl Color4 {
     }
 
     /// Converts the `Color4` to sRGB and returns the result in an array.
-    pub fn to_srgb(&self) -> [f32; 4] {
+    pub fn to_srgb(self) -> [f32; 4] {
         [self.r.powf(1.0 / 2.2), self.g.powf(1.0 / 2.2), self.b.powf(1.0 / 2.2), self.a]
     }
 
     /// Converts the `Color4` to an array, without converting to sRGB.
-    pub fn to_array(&self) -> [f32; 4] {
+    pub fn to_array(self) -> [f32; 4] {
         [self.r, self.g, self.b, self.a]
     }
 

@@ -3,7 +3,6 @@
 use glow::HasContext;
 
 use crate::gl::*;
-use image;
 use image::DynamicImage;
 use std::fs;
 use std::path::*;

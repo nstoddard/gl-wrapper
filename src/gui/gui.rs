@@ -179,7 +179,7 @@ fn widget_handle_event(
             Event::Scroll(_) => Some(event),
         };
         if let Some(event2) = event2 {
-            let events = events_out.entry(widget.id()).or_insert_with(|| vec![]);
+            let events = events_out.entry(widget.id()).or_insert_with(Vec::new);
             events.push(event2);
             return true;
         }
@@ -251,13 +251,13 @@ impl GuiEventResult {
         theme: &Theme,
         component: &mut Box<C>,
     ) -> C::Res {
-        let events = self.component_events.remove(&component.id()).unwrap_or_else(|| vec![]);
+        let events = self.component_events.remove(&component.id()).unwrap_or_else(Vec::new);
         component.update(theme, events)
     }
 
     /// Returns all events that weren't handled by any `Component`.
     pub fn unhandled_events(&mut self) -> Vec<Event> {
-        mem::replace(&mut self.unhandled_events, vec![])
+        mem::take(&mut self.unhandled_events)
     }
 }
 
@@ -352,25 +352,22 @@ impl Gui {
                 if let Some((ref mut active_component_index, ref mut active_component_id)) =
                     &mut self.active_component
                 {
-                    match event {
-                        Event::KeyDown(key) => {
-                            if key.code == "Tab" && !key.shift {
-                                *active_component_index = (*active_component_index + 1)
-                                    % (ordered_components.len() as i32);
-                                *active_component_id =
-                                    ordered_components[*active_component_index as usize];
-                                continue;
-                            } else if key.code == "Tab" && key.shift {
-                                // Workaround for mod_euc not yet being stable
-                                *active_component_index = (*active_component_index - 1
-                                    + ordered_components.len() as i32)
-                                    % (ordered_components.len() as i32);
-                                *active_component_id =
-                                    ordered_components[*active_component_index as usize];
-                                continue;
-                            }
+                    if let Event::KeyDown(key) = event {
+                        if key.code == "Tab" && !key.shift {
+                            *active_component_index =
+                                (*active_component_index + 1) % (ordered_components.len() as i32);
+                            *active_component_id =
+                                ordered_components[*active_component_index as usize];
+                            continue;
+                        } else if key.code == "Tab" && key.shift {
+                            // Workaround for mod_euc not yet being stable
+                            *active_component_index = (*active_component_index - 1
+                                + ordered_components.len() as i32)
+                                % (ordered_components.len() as i32);
+                            *active_component_id =
+                                ordered_components[*active_component_index as usize];
+                            continue;
                         }
-                        _ => (),
                     }
                 }
                 unhandled_events.push(event.clone());
@@ -380,5 +377,11 @@ impl Gui {
         } else {
             GuiEventResult { component_events: collect![], unhandled_events: events.to_vec() }
         }
+    }
+}
+
+impl Default for Gui {
+    fn default() -> Self {
+        Self::new()
     }
 }

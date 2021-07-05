@@ -160,22 +160,18 @@ impl Key {
             // Other keys aren't yet supported; if you need other keys, please file an issue or send a PR
             _ => None,
         };
-        if let Some(code) = code {
-            Some(Self {
-                code: code.to_owned(),
-                shift: modifiers.contains(glfw::Modifiers::Shift),
-                ctrl: modifiers.contains(glfw::Modifiers::Control),
-                alt: modifiers.contains(glfw::Modifiers::Alt),
-                is_modifier: key == LeftShift
-                    || key == LeftControl
-                    || key == LeftAlt
-                    || key == RightShift
-                    || key == RightControl
-                    || key == RightAlt,
-            })
-        } else {
-            None
-        }
+        code.map(|code| Self {
+            code: code.to_owned(),
+            shift: modifiers.contains(glfw::Modifiers::Shift),
+            ctrl: modifiers.contains(glfw::Modifiers::Control),
+            alt: modifiers.contains(glfw::Modifiers::Alt),
+            is_modifier: key == LeftShift
+                || key == LeftControl
+                || key == LeftAlt
+                || key == RightShift
+                || key == RightControl
+                || key == RightAlt,
+        })
     }
 }
 
