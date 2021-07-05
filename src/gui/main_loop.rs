@@ -1,6 +1,6 @@
 use cgmath::*;
 use collect_mac::*;
-use fnv::*;
+use fxhash::*;
 use wasm_stopwatch::*;
 
 use crate::gl::*;
@@ -31,9 +31,9 @@ use crate::glfw::*;
 pub struct EventState {
     /// Contains all keys that are currently pressed.
     /// Note that this contains keycodes (`event.code`), not `event.key` values.
-    pub pressed_keys: FnvHashSet<Keycode>,
+    pub pressed_keys: FxHashSet<Keycode>,
     /// All mouse buttons that are currently pressed.
-    pub pressed_mouse_buttons: FnvHashSet<MouseButton>,
+    pub pressed_mouse_buttons: FxHashSet<MouseButton>,
     /// The current position of the cursor, if it's within the canvas.
     pub cursor_pos: Option<Point2<i32>>,
     /// The position of the cursor before the last mouse movement event.

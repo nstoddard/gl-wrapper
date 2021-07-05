@@ -1,7 +1,7 @@
 use crate::gl::uniforms::*;
 use crate::gl::*;
 use cgmath::*;
-use fnv::*;
+use fxhash::*;
 use rusttype::{self, Scale};
 use std::cell::RefCell;
 use std::collections::hash_map::*;
@@ -164,8 +164,8 @@ struct FontInner {
     font: rusttype::Font<'static>,
     advance_y: i32,
     ascent: f32,
-    glyphs: FnvHashMap<char, CachedGlyph>,
-    kerning: FnvHashMap<(char, char), f32>,
+    glyphs: FxHashMap<char, CachedGlyph>,
+    kerning: FxHashMap<(char, char), f32>,
     framebuffer: Framebuffer<Texture2d>,
     cur_x: u32,
     cur_y: u32,
@@ -238,8 +238,8 @@ impl FontInner {
             font,
             advance_y: advance_y as i32,
             ascent,
-            glyphs: FnvHashMap::default(),
-            kerning: FnvHashMap::default(),
+            glyphs: FxHashMap::default(),
+            kerning: FxHashMap::default(),
             framebuffer,
             cur_x: 0,
             cur_y: 0,

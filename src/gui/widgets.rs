@@ -1,6 +1,6 @@
 use crate::gl::*;
 use cgmath::*;
-use fnv::*;
+use fxhash::*;
 use std::mem;
 use wasm_stopwatch::*;
 
@@ -42,7 +42,7 @@ impl Widget for Label {
         &self,
         context: &GlContext,
         theme: &Theme,
-        _min_sizes: &FnvHashMap<WidgetId, Vector2<i32>>,
+        _min_sizes: &FxHashMap<WidgetId, Vector2<i32>>,
         _window_size: Vector2<i32>,
     ) -> Vector2<i32> {
         theme.font.string_size(context, &self.text)
@@ -142,7 +142,7 @@ impl Widget for Button {
         &self,
         context: &GlContext,
         theme: &Theme,
-        _min_sizes: &FnvHashMap<WidgetId, Vector2<i32>>,
+        _min_sizes: &FxHashMap<WidgetId, Vector2<i32>>,
         _window_size: Vector2<i32>,
     ) -> Vector2<i32> {
         theme.font.string_size(context, &self.text) + vec2(4, 2)
@@ -183,7 +183,7 @@ impl Widget for NoFill {
         &self,
         _context: &GlContext,
         _theme: &Theme,
-        min_sizes: &FnvHashMap<WidgetId, Vector2<i32>>,
+        min_sizes: &FxHashMap<WidgetId, Vector2<i32>>,
         _window_size: Vector2<i32>,
     ) -> Vector2<i32> {
         min_sizes[&self.child.id()]
@@ -197,8 +197,8 @@ impl Widget for NoFill {
         &self,
         rect: Rect<i32>,
         theme: &Theme,
-        min_sizes: &FnvHashMap<WidgetId, Vector2<i32>>,
-        widget_rects: &mut FnvHashMap<WidgetId, Rect<i32>>,
+        min_sizes: &FxHashMap<WidgetId, Vector2<i32>>,
+        widget_rects: &mut FxHashMap<WidgetId, Rect<i32>>,
     ) {
         let min_size = min_sizes[&self.id()];
         widget_rects.insert(self.id(), Rect::new(rect.start, rect.start + min_size));
@@ -254,7 +254,7 @@ impl Widget for Col {
         &self,
         _context: &GlContext,
         _theme: &Theme,
-        min_sizes: &FnvHashMap<WidgetId, Vector2<i32>>,
+        min_sizes: &FxHashMap<WidgetId, Vector2<i32>>,
         _window_size: Vector2<i32>,
     ) -> Vector2<i32> {
         let mut min_size: Vector2<i32> = Vector2::zero();
@@ -274,8 +274,8 @@ impl Widget for Col {
         &self,
         rect: Rect<i32>,
         theme: &Theme,
-        min_sizes: &FnvHashMap<WidgetId, Vector2<i32>>,
-        widget_rects: &mut FnvHashMap<WidgetId, Rect<i32>>,
+        min_sizes: &FxHashMap<WidgetId, Vector2<i32>>,
+        widget_rects: &mut FxHashMap<WidgetId, Rect<i32>>,
     ) {
         let total_flex = self.children.iter().map(|&(ref _child, flex)| flex).sum();
         let min_size = min_sizes[&self.id()];
@@ -342,7 +342,7 @@ impl Widget for Row {
         &self,
         _context: &GlContext,
         _theme: &Theme,
-        min_sizes: &FnvHashMap<WidgetId, Vector2<i32>>,
+        min_sizes: &FxHashMap<WidgetId, Vector2<i32>>,
         _window_size: Vector2<i32>,
     ) -> Vector2<i32> {
         let mut min_size: Vector2<i32> = Vector2::zero();
@@ -362,8 +362,8 @@ impl Widget for Row {
         &self,
         rect: Rect<i32>,
         theme: &Theme,
-        min_sizes: &FnvHashMap<WidgetId, Vector2<i32>>,
-        widget_rects: &mut FnvHashMap<WidgetId, Rect<i32>>,
+        min_sizes: &FxHashMap<WidgetId, Vector2<i32>>,
+        widget_rects: &mut FxHashMap<WidgetId, Rect<i32>>,
     ) {
         let total_flex = self.children.iter().map(|&(ref _child, flex)| flex).sum();
         let min_size = min_sizes[&self.id()];
@@ -447,7 +447,7 @@ impl Widget for TextBox {
         &self,
         context: &GlContext,
         theme: &Theme,
-        _min_sizes: &FnvHashMap<WidgetId, Vector2<i32>>,
+        _min_sizes: &FxHashMap<WidgetId, Vector2<i32>>,
         _window_size: Vector2<i32>,
     ) -> Vector2<i32> {
         let max_width = self.lines.iter().map(|x| theme.font.string_width(context, x) as i32).max();
@@ -511,7 +511,7 @@ impl Widget for MessageBox {
         &self,
         context: &GlContext,
         theme: &Theme,
-        _min_sizes: &FnvHashMap<WidgetId, Vector2<i32>>,
+        _min_sizes: &FxHashMap<WidgetId, Vector2<i32>>,
         _window_size: Vector2<i32>,
     ) -> Vector2<i32> {
         let max_width =
@@ -567,7 +567,7 @@ impl Widget for Overlap {
         &self,
         _context: &GlContext,
         _theme: &Theme,
-        min_sizes: &FnvHashMap<WidgetId, Vector2<i32>>,
+        min_sizes: &FxHashMap<WidgetId, Vector2<i32>>,
         _window_size: Vector2<i32>,
     ) -> Vector2<i32> {
         let mut min_size: Vector2<i32> = Vector2::zero();
@@ -587,8 +587,8 @@ impl Widget for Overlap {
         &self,
         rect: Rect<i32>,
         theme: &Theme,
-        min_sizes: &FnvHashMap<WidgetId, Vector2<i32>>,
-        widget_rects: &mut FnvHashMap<WidgetId, Rect<i32>>,
+        min_sizes: &FxHashMap<WidgetId, Vector2<i32>>,
+        widget_rects: &mut FxHashMap<WidgetId, Rect<i32>>,
     ) {
         let own_rect = rect;
         widget_rects.insert(self.id(), own_rect);
@@ -635,7 +635,7 @@ impl Widget for EmptyWidget {
         &self,
         _context: &GlContext,
         _theme: &Theme,
-        _min_sizes: &FnvHashMap<WidgetId, Vector2<i32>>,
+        _min_sizes: &FxHashMap<WidgetId, Vector2<i32>>,
         _window_size: Vector2<i32>,
     ) -> Vector2<i32> {
         self.size
@@ -673,7 +673,7 @@ impl Widget for Padding {
         &self,
         _context: &GlContext,
         theme: &Theme,
-        _min_sizes: &FnvHashMap<WidgetId, Vector2<i32>>,
+        _min_sizes: &FxHashMap<WidgetId, Vector2<i32>>,
         _window_size: Vector2<i32>,
     ) -> Vector2<i32> {
         vec2(theme.padding, theme.padding)
@@ -712,7 +712,7 @@ impl Widget for Inset {
         &self,
         _context: &GlContext,
         theme: &Theme,
-        min_sizes: &FnvHashMap<WidgetId, Vector2<i32>>,
+        min_sizes: &FxHashMap<WidgetId, Vector2<i32>>,
         _window_size: Vector2<i32>,
     ) -> Vector2<i32> {
         min_sizes[&self.child.id()] + vec2(theme.padding * 2, theme.padding * 2)
@@ -726,8 +726,8 @@ impl Widget for Inset {
         &self,
         rect: Rect<i32>,
         theme: &Theme,
-        min_sizes: &FnvHashMap<WidgetId, Vector2<i32>>,
-        widget_rects: &mut FnvHashMap<WidgetId, Rect<i32>>,
+        min_sizes: &FxHashMap<WidgetId, Vector2<i32>>,
+        widget_rects: &mut FxHashMap<WidgetId, Rect<i32>>,
     ) {
         widget_rects.insert(
             self.id(),
@@ -821,7 +821,7 @@ impl<T: Copy + PartialEq> Widget for Selector<T> {
         &self,
         context: &GlContext,
         theme: &Theme,
-        _min_sizes: &FnvHashMap<WidgetId, Vector2<i32>>,
+        _min_sizes: &FxHashMap<WidgetId, Vector2<i32>>,
         _window_size: Vector2<i32>,
     ) -> Vector2<i32> {
         let max_width =
@@ -905,7 +905,7 @@ impl Widget for Fill {
         &self,
         _context: &GlContext,
         _theme: &Theme,
-        min_sizes: &FnvHashMap<WidgetId, Vector2<i32>>,
+        min_sizes: &FxHashMap<WidgetId, Vector2<i32>>,
         _window_size: Vector2<i32>,
     ) -> Vector2<i32> {
         min_sizes[&self.child.id()]
@@ -919,8 +919,8 @@ impl Widget for Fill {
         &self,
         rect: Rect<i32>,
         theme: &Theme,
-        min_sizes: &FnvHashMap<WidgetId, Vector2<i32>>,
-        widget_rects: &mut FnvHashMap<WidgetId, Rect<i32>>,
+        min_sizes: &FxHashMap<WidgetId, Vector2<i32>>,
+        widget_rects: &mut FxHashMap<WidgetId, Rect<i32>>,
     ) {
         widget_rects.insert(self.id(), Rect::new(rect.start, rect.end));
         self.child.compute_rects(Rect::new(rect.start, rect.end), theme, min_sizes, widget_rects);
@@ -1097,7 +1097,7 @@ impl Widget for TextEntry {
         &self,
         context: &GlContext,
         theme: &Theme,
-        _min_sizes: &FnvHashMap<WidgetId, Vector2<i32>>,
+        _min_sizes: &FxHashMap<WidgetId, Vector2<i32>>,
         _window_size: Vector2<i32>,
     ) -> Vector2<i32> {
         let drawn_text = if self.text.is_empty() { &self.placeholder_text } else { &self.text };

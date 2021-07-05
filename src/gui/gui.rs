@@ -1,7 +1,7 @@
 use crate::gl::*;
 use cgmath::*;
 use collect_mac::*;
-use fnv::*;
+use fxhash::*;
 use std::mem;
 use uid::*;
 
@@ -74,7 +74,7 @@ pub trait Widget {
         &self,
         context: &GlContext,
         theme: &Theme,
-        min_sizes: &FnvHashMap<WidgetId, Vector2<i32>>,
+        min_sizes: &FxHashMap<WidgetId, Vector2<i32>>,
         window_size: Vector2<i32>,
     ) -> Vector2<i32>;
 
@@ -89,8 +89,8 @@ pub trait Widget {
         &self,
         rect: Rect<i32>,
         _theme: &Theme,
-        _min_sizes: &FnvHashMap<WidgetId, Vector2<i32>>,
-        widget_rects: &mut FnvHashMap<WidgetId, Rect<i32>>,
+        _min_sizes: &FxHashMap<WidgetId, Vector2<i32>>,
+        widget_rects: &mut FxHashMap<WidgetId, Rect<i32>>,
     ) {
         widget_rects.insert(self.id(), rect);
     }
@@ -100,7 +100,7 @@ fn compute_widget_min_size(
     widget: &dyn Widget,
     context: &GlContext,
     theme: &Theme,
-    min_sizes: &mut FnvHashMap<WidgetId, Vector2<i32>>,
+    min_sizes: &mut FxHashMap<WidgetId, Vector2<i32>>,
     window_size: Vector2<i32>,
 ) {
     for child in widget.children() {
@@ -113,10 +113,10 @@ fn compute_widget_min_size(
 fn widget_handle_event(
     widget: &dyn Widget,
     event: &Event,
-    widget_rects: &FnvHashMap<WidgetId, Rect<i32>>,
-    events_out: &mut FnvHashMap<WidgetId, Vec<Event>>,
+    widget_rects: &FxHashMap<WidgetId, Rect<i32>>,
+    events_out: &mut FxHashMap<WidgetId, Vec<Event>>,
     active_component_id: &mut Option<WidgetId>,
-    selectable_components: &FnvHashSet<WidgetId>,
+    selectable_components: &FxHashSet<WidgetId>,
 ) -> bool {
     if widget.is_component() {
         let rect = widget_rects[&widget.id()];
@@ -205,7 +205,7 @@ fn draw_widget(
     surface: &dyn Surface,
     theme: &Theme,
     draw_2d: &mut Draw2d,
-    widget_rects: &FnvHashMap<WidgetId, Rect<i32>>,
+    widget_rects: &FxHashMap<WidgetId, Rect<i32>>,
     cursor_pos: Option<Point2<i32>>,
     active_widget_id: Option<WidgetId>,
 ) {
@@ -232,7 +232,7 @@ pub struct GuiResult {
 
 pub struct GuiEventResult {
     /// Events to be handled by each component
-    component_events: FnvHashMap<WidgetId, Vec<Event>>,
+    component_events: FxHashMap<WidgetId, Vec<Event>>,
     /// Events not handled by any component
     unhandled_events: Vec<Event>,
 }
@@ -269,7 +269,7 @@ pub struct Gui {
 
 struct RenderedGui {
     widget: Box<dyn Widget>,
-    widget_rects: FnvHashMap<WidgetId, Rect<i32>>,
+    widget_rects: FxHashMap<WidgetId, Rect<i32>>,
 }
 
 impl Gui {
