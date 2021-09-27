@@ -436,7 +436,7 @@ impl Widget for TextBox {
         for (i, line) in self.lines.iter().enumerate() {
             theme.font.draw_string(
                 context,
-                &line,
+                line,
                 rect.start.cast().unwrap() + vec2(0, advance_y * i as i32),
                 self.text_color,
             );
@@ -500,7 +500,7 @@ impl Widget for MessageBox {
         for (i, &(ref line, color)) in self.lines.iter().enumerate() {
             theme.font.draw_string(
                 context,
-                &line,
+                line,
                 rect.start.cast().unwrap() + vec2(0, advance_y * i as i32),
                 color,
             );
@@ -802,7 +802,7 @@ impl<T: Copy + PartialEq> Widget for Selector<T> {
     ) {
         for (i, (line, _)) in self.options.iter().enumerate() {
             let pos = rect.start.cast().unwrap() + vec2(0, theme.font.advance_y() * i as i32);
-            let rect = Rect::new(pos, pos + theme.font.string_size(context, &line));
+            let rect = Rect::new(pos, pos + theme.font.string_size(context, line));
             let background_color = if Some(i) == self.selected_option {
                 Color4::WHITE.mul_srgb(0.5)
             } else if cursor_pos.is_some()
@@ -813,7 +813,7 @@ impl<T: Copy + PartialEq> Widget for Selector<T> {
                 Color4::WHITE
             };
             draw_2d.fill_rect(rect, background_color);
-            theme.font.draw_string(context, &line, pos, Color4::BLACK);
+            theme.font.draw_string(context, line, pos, Color4::BLACK);
         }
     }
 
@@ -1079,7 +1079,7 @@ impl Widget for TextEntry {
         };
         draw_2d.fill_rect(rect, fill_color);
         draw_2d.outline_rect(rect, theme.button_border_color, 1.0);
-        theme.font.draw_string(context, &drawn_text, rect.start + vec2(2, 1), drawn_text_color);
+        theme.font.draw_string(context, drawn_text, rect.start + vec2(2, 1), drawn_text_color);
         if self.stopwatch.get_time().rem_euclid(CARET_BLINK_RATE) < CARET_BLINK_RATE * 0.5
             && is_active
         {

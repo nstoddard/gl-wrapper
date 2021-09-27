@@ -101,7 +101,7 @@ impl<V: Vertex, U: GlUniforms> GlProgram<V, U> {
     fn load_shader(context: &GlContext, shader_type: ShaderType, source: &str) -> GlShader {
         unsafe {
             let shader = context.inner().create_shader(shader_type.as_gl()).unwrap();
-            context.inner().shader_source(shader, &source);
+            context.inner().shader_source(shader, source);
             context.inner().compile_shader(shader);
 
             let compile_status = context.inner().get_shader_compile_status(shader);

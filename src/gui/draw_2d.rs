@@ -110,20 +110,20 @@ pub struct Draw2dPrograms {
 impl Draw2dPrograms {
     pub fn new(context: &GlContext) -> Self {
         let plain_program: GlProgram<PlainVert, PlainUniformsGl> = GlProgram::new_with_header(
-            &context,
+            context,
             include_str!("shaders/plain_vert.glsl"),
             include_str!("shaders/plain_frag.glsl"),
             true,
         );
         let image_program_srgb: GlProgram<ImageVert, ImageUniformsGl> = GlProgram::new_with_header(
-            &context,
+            context,
             include_str!("shaders/image_vert.glsl"),
             include_str!("shaders/image_frag.glsl"),
             true,
         );
         let image_program_linear: GlProgram<ImageVert, ImageUniformsGl> =
             GlProgram::new_with_header(
-                &context,
+                context,
                 include_str!("shaders/image_vert.glsl"),
                 include_str!("shaders/image_frag.glsl"),
                 false,

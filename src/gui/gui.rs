@@ -334,8 +334,8 @@ impl Gui {
                 let old_active_component_id = active_component_id;
                 widget_handle_event(
                     &**widget,
-                    &event,
-                    &widget_rects,
+                    event,
+                    widget_rects,
                     &mut events_out,
                     &mut active_component_id,
                     &ordered_components.iter().copied().collect(),

@@ -65,7 +65,7 @@ pub fn create_window_inner(
 }
 
 pub fn update_window_mode(window: &mut glfw::Window, window_mode: &WindowMode) {
-    get_glfw().with_primary_monitor_mut(|_glfw, m| {
+    get_glfw().with_primary_monitor(|_glfw, m| {
         let monitor = m.expect("Failed to find primary monitor.");
         let mode = monitor.get_video_mode().expect("Failed to get video mode (2).");
         match *window_mode {
