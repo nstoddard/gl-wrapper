@@ -304,7 +304,7 @@ pub fn start_main_loop(canvas_id: &str, app: Box<dyn App>) {
     *closure.borrow_mut() = Some(Closure::wrap(Box::new(move || {
         let mut queued_events = queued_events2.borrow_mut();
         let event_state = event_state.borrow_mut();
-        let events = std::mem::replace(&mut *queued_events, vec![]);
+        let events = std::mem::take(&mut *queued_events);
         let dt = stopwatch.get_time();
         stopwatch.reset();
         app3.borrow_mut().render_frame(events, &event_state, dt);

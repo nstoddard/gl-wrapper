@@ -33,8 +33,12 @@ pub fn take_screenshot(
     let path = match path {
         Some(path) => path,
         None => {
-            let time = chrono::offset::Local::now();
-            Path::new(&format!("screenshots/screenshot-{}.png", time.to_rfc3339())).to_path_buf()
+            let time = time::OffsetDateTime::now_utc();
+            Path::new(&format!(
+                "screenshots/screenshot-{}.png",
+                time.format(&time::format_description::well_known::Rfc3339).unwrap()
+            ))
+            .to_path_buf()
         }
     };
     match path.parent() {
