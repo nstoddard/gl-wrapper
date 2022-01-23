@@ -347,6 +347,44 @@ impl<V: Vertex, U: GlUniforms, P: Primitive> Mesh<V, U, P> {
         }
     }
 
+    /// Clears the mesh's current contents and updates it with the contents of the given vertex and index slices
+    pub fn build_from_slices<T>(
+        &mut self,
+        vertices: &[T],
+        indices: &[MeshIndex],
+        usage: MeshUsage,
+    ) {
+        self.num_indices = indices.len() as i32;
+        if self.num_indices == 0 {
+            return;
+        }
+
+        self.bind();
+
+        setup_vertex_attribs::<V, _, _>(&self.program, false);
+
+        unsafe {
+            self.context.inner().buffer_data_u8_slice(
+                glow::ARRAY_BUFFER,
+                // TODO: find a better way to convert a &[T] to a &[u8]
+                std::slice::from_raw_parts(
+                    vertices.as_ptr() as *const u8,
+                    vertices.len() * std::mem::size_of::<T>(),
+                ),
+                usage.as_gl(),
+            );
+
+            self.context.inner().buffer_data_u8_slice(
+                glow::ELEMENT_ARRAY_BUFFER,
+                std::slice::from_raw_parts(
+                    indices.as_ptr() as *const u8,
+                    indices.len() * std::mem::size_of::<u16>(),
+                ),
+                usage.as_gl(),
+            );
+        }
+    }
+
     fn bind(&self) {
         unsafe {
             self.context.inner().bind_vertex_array(Some(self.vao));
