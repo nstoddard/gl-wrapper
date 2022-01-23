@@ -153,6 +153,10 @@ impl<V: Vertex, P: Primitive> MeshBuilder<V, P> {
     pub fn next_index(&self) -> MeshIndex {
         self.next_index
     }
+
+    pub fn is_empty(&self) -> bool {
+        self.vertex_data.is_empty()
+    }
 }
 
 impl<V: Vertex, P: Primitive> Default for MeshBuilder<V, P> {

@@ -28,6 +28,7 @@ use super::event::*;
 #[cfg(not(target_arch = "wasm32"))]
 use crate::glfw::*;
 
+#[derive(Clone)]
 pub struct EventState {
     /// Contains all keys that are currently pressed.
     /// Note that this contains keycodes (`event.code`), not `event.key` values.

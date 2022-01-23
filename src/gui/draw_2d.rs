@@ -189,7 +189,7 @@ impl Draw2d {
         surface: &(impl Surface + ?Sized),
         matrix: Matrix4<f32>,
     ) {
-        self.triangle_mesh.build_from(&self.triangle_mesh_builder, MeshUsage::DynamicDraw);
+        self.triangle_mesh.build_from(&self.triangle_mesh_builder, MeshUsage::StreamDraw);
         self.triangle_mesh.draw(surface, &PlainUniforms { matrix, color: Color4::WHITE });
 
         self.triangle_mesh_builder.clear();
@@ -284,7 +284,7 @@ impl Draw2d {
         );
     }
 
-    /// Draws an image. Unlike the other functions on `Draw2d`, this draws the image immediately.
+    /// Draws an image. Unlike most other functions on `Draw2d`, this draws the image immediately.
     pub fn draw_image(
         &mut self,
         surface: &(impl Surface + ?Sized),
@@ -292,10 +292,8 @@ impl Draw2d {
         pos: Point2<f32>,
         scale: f32,
     ) {
-        let surface_size = surface.size();
-        let matrix = Matrix4::from_nonuniform_scale(1.0, -1.0, 1.0)
-            * ortho(0.0, surface_size.x as f32, 0.0, surface_size.y as f32, 0.0, 1.0)
-            * Matrix4::from_nonuniform_scale(scale, scale, 1.0);
+        let matrix =
+            compute_ortho_matrix(surface) * Matrix4::from_nonuniform_scale(scale, scale, 1.0);
 
         let a = self.image_mesh_builder.vert(ImageVert {
             pos,
@@ -322,7 +320,54 @@ impl Draw2d {
 
         let image_mesh =
             if tex.is_srgb() { &mut self.image_mesh_srgb } else { &mut self.image_mesh_linear };
-        image_mesh.build_from(&self.image_mesh_builder, MeshUsage::DynamicDraw);
+        image_mesh.build_from(&self.image_mesh_builder, MeshUsage::StreamDraw);
+        image_mesh.draw(surface, &ImageUniforms { matrix, color: Color4::WHITE, tex });
+
+        self.image_mesh_builder.clear();
+    }
+
+    /// Draws part of an image. Unlike most other functions on `Draw2d`, this draws the image immediately.
+    pub fn draw_part_of_image(
+        &mut self,
+        surface: &(impl Surface + ?Sized),
+        tex: &Texture2d,
+        start: Point2<i32>,
+        end: Point2<i32>,
+        start_pos: Point2<f32>,
+        end_pos: Point2<f32>,
+        matrix: Matrix4<f32>,
+    ) {
+        let start: Point2<f32> = start.cast().unwrap();
+        let end: Point2<f32> = end.cast().unwrap();
+        let start2 = point2(start.x / tex.size().x as f32, start.y / tex.size().y as f32);
+        let end2 = point2(end.x / tex.size().x as f32, end.y / tex.size().y as f32);
+
+        let a = self.image_mesh_builder.vert(ImageVert {
+            pos: start_pos,
+            uv: start2,
+            color: Color4::WHITE,
+        });
+        let b = self.image_mesh_builder.vert(ImageVert {
+            pos: point2(end_pos.x, start_pos.y),
+            uv: point2(end2.x, start2.y),
+            color: Color4::WHITE,
+        });
+        let c = self.image_mesh_builder.vert(ImageVert {
+            pos: point2(start_pos.x, end_pos.y),
+            uv: point2(start2.x, end2.y),
+            color: Color4::WHITE,
+        });
+        let d = self.image_mesh_builder.vert(ImageVert {
+            pos: end_pos,
+            uv: end2,
+            color: Color4::WHITE,
+        });
+        self.image_mesh_builder.triangle(a, b, c);
+        self.image_mesh_builder.triangle(b, c, d);
+
+        let image_mesh =
+            if tex.is_srgb() { &mut self.image_mesh_srgb } else { &mut self.image_mesh_linear };
+        image_mesh.build_from(&self.image_mesh_builder, MeshUsage::StreamDraw);
         image_mesh.draw(surface, &ImageUniforms { matrix, color: Color4::WHITE, tex });
 
         self.image_mesh_builder.clear();
