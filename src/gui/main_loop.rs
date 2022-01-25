@@ -41,6 +41,12 @@ pub struct EventState {
     pub prev_cursor_pos: Option<Point2<i32>>,
     /// True if a pointer lock is active (through the pointer lock API).
     pub pointer_locked: bool,
+    /// True if shift is pressed.
+    pub shift: bool,
+    /// True if ctrl is pressed.
+    pub ctrl: bool,
+    /// True if alt is pressed.
+    pub alt: bool,
 }
 
 /// The callback will be called every time an event occurs. This function is called by
@@ -61,6 +67,9 @@ pub fn setup_event_callbacks(
         cursor_pos: None,
         prev_cursor_pos: None,
         pointer_locked: false,
+        shift: false,
+        ctrl: false,
+        alt: false,
     }));
     let event_state2 = event_state.clone();
     let event_state3 = event_state.clone();
@@ -70,9 +79,21 @@ pub fn setup_event_callbacks(
         match event {
             Event::KeyDown(ref key) => {
                 event_state.pressed_keys.insert(key.code.clone());
+                match key.code.as_ref() {
+                    "Shift" => event_state.shift = true,
+                    "Ctrl" => event_state.ctrl = true,
+                    "Alt" => event_state.alt = true,
+                    _ => (),
+                }
             }
             Event::KeyUp(ref key) => {
                 event_state.pressed_keys.remove(&key.code);
+                match key.code.as_ref() {
+                    "Shift" => event_state.shift = false,
+                    "Ctrl" => event_state.ctrl = false,
+                    "Alt" => event_state.alt = false,
+                    _ => (),
+                }
             }
             Event::FocusLost => {
                 event_state.pressed_keys.clear();
@@ -339,6 +360,9 @@ pub fn start_main_loop(mut app: Box<dyn App>, event_receiver: EventReceiver) {
         cursor_pos: None,
         prev_cursor_pos: None,
         pointer_locked: app.screen_surface().grab_cursor,
+        shift: false,
+        ctrl: false,
+        alt: false,
     }; // TODO
     let mut prev_cursor_pos = None; // TODO: merge with event_state
 
@@ -358,9 +382,21 @@ pub fn start_main_loop(mut app: Box<dyn App>, event_receiver: EventReceiver) {
                 match event {
                     Event::KeyDown(ref key) => {
                         event_state.pressed_keys.insert(key.code.clone());
+                        match key.code.as_ref() {
+                            "Shift" => event_state.shift = true,
+                            "Ctrl" => event_state.ctrl = true,
+                            "Alt" => event_state.alt = true,
+                            _ => (),
+                        }
                     }
                     Event::KeyUp(ref key) => {
                         event_state.pressed_keys.remove(&key.code);
+                        match key.code.as_ref() {
+                            "Shift" => event_state.shift = false,
+                            "Ctrl" => event_state.ctrl = false,
+                            "Alt" => event_state.alt = false,
+                            _ => (),
+                        }
                     }
                     Event::FocusLost => {
                         event_state.pressed_keys.clear();

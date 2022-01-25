@@ -34,6 +34,8 @@ pub type Keycode = String;
 pub struct Key {
     /// These correspond to `event.code` values.
     /// On desktop, an attempt is made to convert from GLFW keycodes to JS `event.code` values.
+    /// Exception: we don't want to distinguish between e.g. left shift and right shift, so
+    /// "Shift" represents either shift key.
     pub code: String,
     pub shift: bool,
     pub ctrl: bool,
@@ -56,7 +58,12 @@ impl Key {
     #[cfg(target_arch = "wasm32")]
     pub(crate) fn from_js(js_key: &KeyboardEvent) -> Self {
         Self {
-            code: js_key.code(),
+            code: match js_key.key().as_ref() {
+                "Shift" => "Shift".to_owned(),
+                "Control" => "Ctrl".to_owned(),
+                "Alt" => "Alt".to_owned(),
+                _ => js_key.code(),
+            },
             shift: js_key.shift_key(),
             ctrl: js_key.ctrl_key(),
             alt: js_key.alt_key(),
@@ -157,6 +164,9 @@ impl Key {
             Kp7 => Some("Numpad7"),
             Kp8 => Some("Numpad8"),
             Kp9 => Some("Numpad9"),
+            LeftShift | RightShift => Some("Shift"),
+            LeftControl | RightControl => Some("Ctrl"),
+            LeftAlt | RightAlt => Some("Alt"),
             // Other keys aren't yet supported; if you need other keys, please file an issue or send a PR
             _ => None,
         };
