@@ -98,6 +98,9 @@ pub fn setup_event_callbacks(
             Event::FocusLost => {
                 event_state.pressed_keys.clear();
                 event_state.pressed_mouse_buttons.clear();
+                event_state.shift = false;
+                event_state.ctrl = false;
+                event_state.alt = false;
             }
             Event::MouseDown(button, _) => {
                 event_state.pressed_mouse_buttons.insert(button);
@@ -401,6 +404,9 @@ pub fn start_main_loop(mut app: Box<dyn App>, event_receiver: EventReceiver) {
                     Event::FocusLost => {
                         event_state.pressed_keys.clear();
                         event_state.pressed_mouse_buttons.clear();
+                        event_state.shift = false;
+                        event_state.ctrl = false;
+                        event_state.alt = false;
                     }
                     Event::MouseDown(button, _) => {
                         event_state.pressed_mouse_buttons.insert(button);

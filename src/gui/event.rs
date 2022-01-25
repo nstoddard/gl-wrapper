@@ -288,6 +288,7 @@ pub fn event_from_glfw(
                 Some(Event::KeyDown(key))
             }
         }
+        glfw::WindowEvent::Char(c) => Some(Event::CharEntered(c)),
         glfw::WindowEvent::CursorEnter(true) => Some(Event::MouseEnter),
         glfw::WindowEvent::CursorEnter(false) => Some(Event::MouseLeave),
         glfw::WindowEvent::FramebufferSize(width, height) => {
