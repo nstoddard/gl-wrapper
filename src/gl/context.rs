@@ -142,7 +142,10 @@ impl GlContext {
     }
 
     // TODO: sometimes this function is called multiple times in a row; avoid that when possible
-    pub(crate) fn inner(&self) -> std::cell::RefMut<glow::Context> {
+    /// Allows access to the internal `glow::Context`. Use this carefully; this library keeps track
+    /// of several pieces of OpenGL state, for performance, and if they're modified through the
+    /// internal context, rendering may not happen correctly.
+    pub fn inner(&self) -> std::cell::RefMut<glow::Context> {
         self.inner.borrow_mut()
     }
 
