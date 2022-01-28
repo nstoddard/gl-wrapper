@@ -52,6 +52,10 @@ pub trait Surface {
     /// Returns the size of the surface.
     fn size(&self) -> Vector2<u32>;
 
+    fn viewport_size(&self) -> Vector2<i32> {
+        self.size().cast().unwrap()
+    }
+
     #[inline]
     fn width(&self) -> u32 {
         self.size().x
@@ -135,36 +139,6 @@ impl ScreenSurface {
     /// Returns the canvas corresponding to this surface.
     pub fn canvas(&self) -> &HtmlCanvasElement {
         &self.canvas
-    }
-}
-
-#[cfg(target_arch = "wasm32")]
-impl Surface for ScreenSurface {
-    #[doc(hidden)]
-    fn bind(&self, context: &GlContext) {
-        let mut cache = context.cache.borrow_mut();
-        if cache.bound_framebuffer != Some(self.id) {
-            cache.bound_framebuffer = Some(self.id);
-            unsafe {
-                context.inner().bind_framebuffer(glow::DRAW_FRAMEBUFFER, None);
-            }
-            context.viewport(&self.viewport);
-        }
-    }
-
-    #[doc(hidden)]
-    fn bind_read(&self, context: &GlContext) {
-        let mut cache = context.cache.borrow_mut();
-        if cache.bound_read_framebuffer != Some(self.id) {
-            cache.bound_read_framebuffer = Some(self.id);
-            unsafe {
-                context.inner().bind_framebuffer(glow::READ_FRAMEBUFFER, None);
-            }
-        }
-    }
-
-    fn size(&self) -> Vector2<u32> {
-        self.size
     }
 }
 
@@ -255,7 +229,6 @@ impl ScreenSurface {
     }
 }
 
-#[cfg(not(target_arch = "wasm32"))]
 impl Surface for ScreenSurface {
     #[doc(hidden)]
     fn bind(&self, context: &GlContext) {
@@ -282,5 +255,23 @@ impl Surface for ScreenSurface {
 
     fn size(&self) -> Vector2<u32> {
         self.size
+    }
+
+    fn viewport_size(&self) -> Vector2<i32> {
+        self.viewport.size()
+    }
+}
+
+impl ScreenSurface {
+    pub fn viewport(&self) -> Rect<i32> {
+        self.viewport
+    }
+
+    pub fn set_viewport(&mut self, context: &GlContext, viewport: Rect<i32>) {
+        self.viewport = viewport;
+        let cache = context.cache.borrow();
+        if cache.bound_framebuffer == Some(self.id) {
+            context.viewport(&self.viewport);
+        }
     }
 }
