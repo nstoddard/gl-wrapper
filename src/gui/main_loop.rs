@@ -70,28 +70,13 @@ pub fn setup_event_callbacks(
         match event {
             Event::KeyDown(ref key) => {
                 event_state.pressed_keys.insert(key.code.clone());
-                match key.code.as_ref() {
-                    "Shift" => event_state.shift = true,
-                    "Ctrl" => event_state.ctrl = true,
-                    "Alt" => event_state.alt = true,
-                    _ => (),
-                }
             }
             Event::KeyUp(ref key) => {
                 event_state.pressed_keys.remove(&key.code);
-                match key.code.as_ref() {
-                    "Shift" => event_state.shift = false,
-                    "Ctrl" => event_state.ctrl = false,
-                    "Alt" => event_state.alt = false,
-                    _ => (),
-                }
             }
             Event::FocusLost => {
                 event_state.pressed_keys.clear();
                 event_state.pressed_mouse_buttons.clear();
-                event_state.shift = false;
-                event_state.ctrl = false;
-                event_state.alt = false;
             }
             Event::MouseDown(button, _) => {
                 event_state.pressed_mouse_buttons.insert(button);
