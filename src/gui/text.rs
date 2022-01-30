@@ -11,6 +11,7 @@ use std::rc::Rc;
 use super::color::*;
 use super::shader_header::*;
 
+#[repr(C)]
 struct TextCacheVert {
     pos: Vector2<f32>,
     uv: Vector2<f32>,
@@ -27,6 +28,7 @@ impl VertexData for TextCacheVert {
     const ATTRIBUTES: Attributes = &[("pos", 2), ("uv", 2)];
 }
 
+#[repr(C)]
 struct TextRenderVert {
     pos: Vector2<f32>,
     uv: Vector2<f32>,

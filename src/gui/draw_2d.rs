@@ -6,6 +6,7 @@ use std::ops::Neg;
 use super::color::*;
 use super::shader_header::*;
 
+#[repr(C)]
 pub struct PlainVert {
     pub pos: Point2<f32>,
     pub color: Color4,
@@ -49,6 +50,7 @@ impl GlUniforms for PlainUniformsGl {
     }
 }
 
+#[repr(C)]
 pub struct ImageVert {
     pub pos: Point2<f32>,
     pub uv: Point2<f32>,
