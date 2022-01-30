@@ -11,9 +11,9 @@ use web_sys::HtmlImageElement;
 
 #[doc(hidden)]
 #[derive(Eq, PartialEq, Hash, Copy, Clone, Debug)]
-pub(crate) struct TextureId_(());
+pub struct TextureId_(());
 
-pub(crate) type TextureId = Id<TextureId_>;
+pub type TextureId = Id<TextureId_>;
 
 type GlTexture = <glow::Context as HasContext>::Texture;
 
@@ -28,7 +28,7 @@ pub enum TextureFormat {
 }
 
 impl TextureFormat {
-    pub(crate) fn to_gl_internal_format(self) -> u32 {
+    pub fn to_gl_internal_format(self) -> u32 {
         match self {
             TextureFormat::Red => glow::R8,
             TextureFormat::RGB => glow::RGB8,
@@ -38,7 +38,7 @@ impl TextureFormat {
         }
     }
 
-    fn to_gl_format(self) -> u32 {
+    pub fn to_gl_format(self) -> u32 {
         match self {
             TextureFormat::Red => glow::RED,
             TextureFormat::RGB => glow::RGB,
@@ -48,7 +48,7 @@ impl TextureFormat {
         }
     }
 
-    fn is_srgb(self) -> bool {
+    pub fn is_srgb(self) -> bool {
         matches!(self, TextureFormat::SRGB | TextureFormat::SRGBA)
     }
 }
@@ -75,7 +75,7 @@ impl MinFilter {
         }
     }
 
-    fn has_mipmap(self) -> bool {
+    pub fn has_mipmap(self) -> bool {
         match self {
             MinFilter::Nearest => false,
             MinFilter::Linear => false,
@@ -118,10 +118,10 @@ impl WrapMode {
 
 /// A 2D texture.
 pub struct Texture2d {
-    pub(crate) texture: GlTexture,
-    pub(crate) size: Vector2<u32>,
+    pub texture: GlTexture,
+    pub size: Vector2<u32>,
     id: TextureId,
-    pub(crate) context: GlContext,
+    pub context: GlContext,
     is_srgb: bool,
 }
 
@@ -344,7 +344,7 @@ impl Texture2d {
         }
     }
 
-    pub(crate) fn bind(&self, texture_unit: u32) {
+    pub fn bind(&self, texture_unit: u32) {
         let mut cache = self.context.cache.borrow_mut();
         if cache.bound_textures[texture_unit as usize] != Some((glow::TEXTURE_2D, self.id)) {
             cache.bound_textures[texture_unit as usize] = Some((glow::TEXTURE_2D, self.id));

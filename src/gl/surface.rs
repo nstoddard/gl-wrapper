@@ -111,7 +111,7 @@ pub struct ScreenSurface {
 
 #[cfg(target_arch = "wasm32")]
 impl ScreenSurface {
-    pub(crate) fn new(canvas: HtmlCanvasElement) -> Self {
+    pub fn new(canvas: HtmlCanvasElement) -> Self {
         let viewport = Rect::new(
             Point2::origin(),
             Point2::from_vec(vec2(canvas.width() as i32, canvas.height() as i32)),
@@ -160,17 +160,17 @@ impl WindowMode {
 #[cfg(not(target_arch = "wasm32"))]
 /// A surface that represents the screen/default framebuffer.
 pub struct ScreenSurface {
-    pub(crate) inner: glfw::Window,
+    pub inner: glfw::Window,
     viewport: Rect<i32>,
     window_mode: WindowMode,
-    pub(crate) grab_cursor: bool,
+    pub grab_cursor: bool,
     size: Vector2<u32>,
     id: FramebufferId,
 }
 
 #[cfg(not(target_arch = "wasm32"))]
 impl ScreenSurface {
-    pub(crate) fn new(window: glfw::Window, window_mode: WindowMode, grab_cursor: bool) -> Self {
+    pub fn new(window: glfw::Window, window_mode: WindowMode, grab_cursor: bool) -> Self {
         let (window_width, window_height) = window.get_framebuffer_size();
         Self {
             inner: window,

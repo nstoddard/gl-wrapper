@@ -19,14 +19,14 @@ use crate::glfw::*;
 #[derive(Clone)]
 pub struct GlContext {
     inner: Rc<RefCell<glow::Context>>,
-    pub(crate) cache: Rc<RefCell<GlContextCache>>,
+    pub cache: Rc<RefCell<GlContextCache>>,
     // A VBO that is currently used for all instanced rendering
     // TODO: this isn't suitable for all cases of instanced rendering; some apps will want to
     // use static data for the instances rather than recreating them each frame.
-    pub(crate) instanced_vbo: GlBuffer,
+    pub instanced_vbo: GlBuffer,
 }
 
-pub(crate) struct GlContextCache {
+pub struct GlContextCache {
     pub draw_mode: Option<DrawMode>,
     pub bound_program: Option<ProgramId>,
     pub bound_framebuffer: Option<FramebufferId>,
@@ -47,7 +47,7 @@ impl GlContextCache {
 }
 
 #[derive(Copy, Clone, Debug)]
-pub(crate) enum GlFlag {
+pub enum GlFlag {
     DepthTest,
     CullFace,
 }
@@ -161,13 +161,13 @@ impl GlContext {
         }
     }
 
-    pub(crate) fn enable(&self, flag: GlFlag) {
+    pub fn enable(&self, flag: GlFlag) {
         unsafe {
             self.inner().enable(flag.as_gl());
         }
     }
 
-    pub(crate) fn disable(&self, flag: GlFlag) {
+    pub fn disable(&self, flag: GlFlag) {
         unsafe {
             self.inner().disable(flag.as_gl());
         }

@@ -39,7 +39,7 @@ pub enum DrawMode {
 }
 
 impl DrawMode {
-    fn bind(self, context: &GlContext) {
+    pub fn bind(self, context: &GlContext) {
         let mut cache = context.cache.borrow_mut();
         if cache.draw_mode != Some(self) {
             cache.draw_mode = Some(self);

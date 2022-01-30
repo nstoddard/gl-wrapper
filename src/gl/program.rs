@@ -10,9 +10,9 @@ use super::uniforms::*;
 
 #[doc(hidden)]
 #[derive(Eq, PartialEq, Hash, Copy, Clone, Debug)]
-pub(crate) struct ProgramId_(());
+pub struct ProgramId_(());
 
-pub(crate) type ProgramId = Id<ProgramId_>;
+pub type ProgramId = Id<ProgramId_>;
 
 type GlShader = <glow::Context as HasContext>::Shader;
 /// An identifier representing an OpenGL program, used when the full `GlProgram` can't be used.
@@ -35,7 +35,7 @@ impl ShaderType {
 
 /// An OpenGL program.
 pub struct GlProgram<V: Vertex, U: GlUniforms> {
-    pub(crate) inner: Rc<GlProgramInner<V, U>>,
+    pub inner: Rc<GlProgramInner<V, U>>,
 }
 
 impl<V: Vertex, U: GlUniforms> Clone for GlProgram<V, U> {
@@ -44,12 +44,12 @@ impl<V: Vertex, U: GlUniforms> Clone for GlProgram<V, U> {
     }
 }
 
-pub(crate) struct GlProgramInner<V: Vertex, U: GlUniforms> {
-    pub(crate) program: GlProgramId,
-    pub(crate) gl_uniforms: U,
+pub struct GlProgramInner<V: Vertex, U: GlUniforms> {
+    pub program: GlProgramId,
+    pub gl_uniforms: U,
     phantom: PhantomData<V>,
     id: ProgramId,
-    pub(crate) context: GlContext,
+    pub context: GlContext,
     vert_shader: GlShader,
     frag_shader: GlShader,
 }
@@ -114,7 +114,7 @@ impl<V: Vertex, U: GlUniforms> GlProgram<V, U> {
         }
     }
 
-    pub(crate) fn bind(&self, context: &GlContext) {
+    pub fn bind(&self, context: &GlContext) {
         let mut cache = context.cache.borrow_mut();
         if cache.bound_program != Some(self.inner.id) {
             cache.bound_program = Some(self.inner.id);

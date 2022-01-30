@@ -13,9 +13,9 @@ type GlRenderbuffer = <glow::Context as HasContext>::Renderbuffer;
 
 #[doc(hidden)]
 #[derive(Eq, PartialEq, Hash, Copy, Clone, Debug)]
-pub(crate) struct FramebufferId_(());
+pub struct FramebufferId_(());
 
-pub(crate) type FramebufferId = Id<FramebufferId_>;
+pub type FramebufferId = Id<FramebufferId_>;
 
 /// A renderbuffer.
 pub struct Renderbuffer {
