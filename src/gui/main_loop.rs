@@ -1,5 +1,4 @@
 use cgmath::*;
-use collect_mac::*;
 use fxhash::*;
 use wasm_stopwatch::*;
 
@@ -56,8 +55,8 @@ pub fn setup_event_callbacks(
     callback: Box<dyn Fn(Event, &EventState)>,
 ) -> Rc<RefCell<EventState>> {
     let event_state = Rc::new(RefCell::new(EventState {
-        pressed_keys: collect![],
-        pressed_mouse_buttons: collect![],
+        pressed_keys: Default::default(),
+        pressed_mouse_buttons: Default::default(),
         cursor_pos: None,
         prev_cursor_pos: None,
         pointer_locked: false,
@@ -334,8 +333,8 @@ pub fn start_main_loop(mut app: Box<dyn App>, event_receiver: EventReceiver) {
     let mut glfw = get_glfw();
 
     let mut event_state = EventState {
-        pressed_keys: collect![],
-        pressed_mouse_buttons: collect![],
+        pressed_keys: Default::default(),
+        pressed_mouse_buttons: Default::default(),
         cursor_pos: None,
         prev_cursor_pos: None,
         pointer_locked: app.screen_surface().grab_cursor,

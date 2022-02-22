@@ -1,6 +1,5 @@
 use crate::gl::*;
 use cgmath::*;
-use collect_mac::*;
 use fxhash::*;
 use std::mem;
 use uid::*;
@@ -287,8 +286,8 @@ impl Gui {
         cursor_pos: Option<Point2<i32>>,
         widget: Box<dyn Widget>,
     ) -> GuiResult {
-        let mut min_sizes = collect![];
-        let mut widget_rects = collect![];
+        let mut min_sizes = Default::default();
+        let mut widget_rects = Default::default();
         compute_widget_min_size(
             &*widget,
             context,
@@ -326,7 +325,7 @@ impl Gui {
         ordered_components: &[WidgetId],
     ) -> GuiEventResult {
         if let Some(RenderedGui { widget, widget_rects }) = &self.last_render {
-            let mut events_out = collect![];
+            let mut events_out = Default::default();
             let mut unhandled_events = vec![];
             let mut active_component_id = self.active_component.map(|(_a, b)| b);
 
@@ -375,7 +374,10 @@ impl Gui {
 
             GuiEventResult { component_events: events_out, unhandled_events }
         } else {
-            GuiEventResult { component_events: collect![], unhandled_events: events.to_vec() }
+            GuiEventResult {
+                component_events: Default::default(),
+                unhandled_events: events.to_vec(),
+            }
         }
     }
 }

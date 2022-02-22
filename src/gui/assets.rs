@@ -2,8 +2,6 @@ use std::collections::*;
 
 // TODO: see if these `cfg`s can be avoided/merged
 #[cfg(target_arch = "wasm32")]
-use collect_mac::*;
-#[cfg(target_arch = "wasm32")]
 use futures::future::*;
 #[cfg(target_arch = "wasm32")]
 use js_sys::*;
@@ -74,9 +72,9 @@ impl Assets {
     #[cfg(target_arch = "wasm32")]
     pub async fn load(asset_urls: Vec<String>, image_urls: Vec<String>) -> Self {
         let loaded_assets: Rc<RefCell<HashMap<String, Vec<u8>>>> =
-            Rc::new(RefCell::new(collect![]));
+            Rc::new(RefCell::new(Default::default()));
         let loaded_images: Rc<RefCell<HashMap<String, HtmlImageElement>>> =
-            Rc::new(RefCell::new(collect![]));
+            Rc::new(RefCell::new(Default::default()));
 
         let loaded_assets2 = loaded_assets.clone();
         let loaded_images2 = loaded_images.clone();
@@ -164,9 +162,9 @@ impl Assets {
         join_all(futures_to_block_on).await;
 
         let assets: HashMap<String, Vec<u8>> =
-            mem::replace(&mut loaded_assets2.borrow_mut(), collect![]);
+            mem::replace(&mut loaded_assets2.borrow_mut(), Default::default());
         let images: HashMap<String, HtmlImageElement> =
-            mem::replace(&mut loaded_images2.borrow_mut(), collect![]);
+            mem::replace(&mut loaded_images2.borrow_mut(), Default::default());
         Assets { assets, images }
     }
 

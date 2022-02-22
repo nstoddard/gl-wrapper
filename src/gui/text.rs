@@ -1,8 +1,8 @@
 use crate::gl::uniforms::*;
 use crate::gl::*;
+use ab_glyph::ScaleFont;
 use cgmath::*;
 use fxhash::*;
-use rusttype::{self, Scale};
 use std::cell::RefCell;
 use std::collections::hash_map::*;
 use std::iter;
@@ -162,8 +162,7 @@ void main() {
 }";
 
 struct FontInner {
-    size: u32,
-    font: rusttype::Font<'static>,
+    font: ab_glyph::PxScaleFont<ab_glyph::FontVec>,
     advance_y: i32,
     ascent: f32,
     glyphs: FxHashMap<char, CachedGlyph>,
@@ -175,7 +174,7 @@ struct FontInner {
     render_mesh_builder: MeshBuilder<TextRenderVert, Triangles>,
     cache_mesh: Mesh<TextCacheVert, TextCacheUniformsGl, Triangles>,
     render_mesh: Mesh<TextRenderVert, TextRenderUniformsGl, Triangles>,
-    scale: Scale,
+    scale: f32,
 }
 
 /// A glyph that has been generated but not yet added to the cache.
@@ -207,12 +206,11 @@ struct CachedGlyphDisplay {
 }
 
 impl FontInner {
-    pub fn new(context: &GlContext, data: Vec<u8>, size: u32) -> Self {
-        let font = rusttype::Font::try_from_vec(data).unwrap();
-        let scale = Scale { x: size as f32, y: size as f32 };
-        let v_metrics = font.v_metrics(scale);
-        let descent = v_metrics.descent;
-        let ascent = v_metrics.ascent;
+    pub fn new(context: &GlContext, data: Vec<u8>, size: f32) -> Self {
+        use ab_glyph::Font;
+        let font = ab_glyph::FontVec::try_from_vec(data).unwrap().into_scaled(size);
+        let descent = font.descent();
+        let ascent = font.ascent();
         let advance_y = ascent - descent;
 
         let framebuffer = Framebuffer::new_with_texture(
@@ -236,7 +234,6 @@ impl FontInner {
         let render_mesh = Mesh::new(context, &render_program, DrawMode::Draw2D);
 
         Self {
-            size,
             font,
             advance_y: advance_y as i32,
             ascent,
@@ -249,14 +246,14 @@ impl FontInner {
             render_mesh_builder,
             cache_mesh,
             render_mesh,
-            scale,
+            scale: size,
         }
     }
 
     fn get_kerning(&mut self, a: char, b: char) -> f32 {
         match self.kerning.entry((a, b)) {
             Entry::Vacant(entry) => {
-                let kerning = self.font.pair_kerning(self.scale, a, b);
+                let kerning = self.font.kern(self.font.glyph_id(a), self.font.glyph_id(b));
                 *entry.insert(kerning)
             }
             Entry::Occupied(entry) => *entry.get(),
@@ -265,18 +262,17 @@ impl FontInner {
 
     // Renders a glyph and returns a glyph to be added to the cache.
     fn load_glyph(&self, context: &GlContext, c: char) -> PendingGlyph {
-        let glyph = self.font.glyph(c).scaled(self.scale);
-        let advance_x = glyph.h_metrics().advance_width;
-        let positioned = glyph.positioned(rusttype::Point { x: 0.0, y: 0.0 });
+        let glyph_id = self.font.glyph_id(c);
+        let glyph = glyph_id.with_scale(self.scale);
 
-        let display = if c.is_whitespace() {
-            None
-        } else {
+        let advance_x = self.font.h_advance(glyph_id);
+
+        let display = if let Some(outlined_glyph) = self.font.outline_glyph(glyph) {
             let mut bitmap = vec![];
-            positioned.draw(|_x, _y, pixel| {
+            outlined_glyph.draw(|_x, _y, pixel| {
                 bitmap.push((pixel * 255.0) as u8);
             });
-            let bounding_box = positioned.pixel_bounding_box().unwrap();
+            let bounding_box = outlined_glyph.px_bounds();
             let left = bounding_box.min.x;
             let top = bounding_box.min.y;
 
@@ -294,7 +290,9 @@ impl FontInner {
                 WrapMode::ClampToEdge,
             );
 
-            Some(PendingGlyphDisplay { texture, left, top })
+            Some(PendingGlyphDisplay { texture, left: left as i32, top: top as i32 })
+        } else {
+            None
         };
 
         PendingGlyph { display, advance_x }
@@ -543,7 +541,7 @@ pub struct Font {
 
 impl Font {
     /// Creates a new `Font` from a `Vec` containing the contents of a `ttf` file.
-    pub fn new(context: &GlContext, data: Vec<u8>, size: u32) -> Self {
+    pub fn new(context: &GlContext, data: Vec<u8>, size: f32) -> Self {
         Self { inner: Rc::new(RefCell::new(FontInner::new(context, data, size))) }
     }
 
@@ -622,8 +620,8 @@ impl Font {
     }
 
     /// Returns the font size.
-    pub fn size(&self) -> u32 {
-        self.inner.borrow().size
+    pub fn size(&self) -> f32 {
+        self.inner.borrow().scale
     }
 
     pub fn advance_y(&self) -> i32 {
