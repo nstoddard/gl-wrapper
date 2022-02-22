@@ -2,7 +2,7 @@ use std::collections::*;
 
 // TODO: see if these `cfg`s can be avoided/merged
 #[cfg(target_arch = "wasm32")]
-use futures::future::*;
+use futures_util::future::*;
 #[cfg(target_arch = "wasm32")]
 use js_sys::*;
 #[cfg(target_arch = "wasm32")]
