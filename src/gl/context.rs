@@ -44,6 +44,10 @@ impl GlContextCache {
             bound_textures: [None; 32],
         }
     }
+
+    pub(crate) fn clear_bound_textures(&mut self) {
+        self.bound_textures = [None; 32];
+    }
 }
 
 #[derive(Copy, Clone, Debug)]

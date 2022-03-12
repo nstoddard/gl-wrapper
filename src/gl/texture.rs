@@ -149,6 +149,7 @@ impl Texture2d {
         let texture = unsafe {
             let texture = context.inner().create_texture().unwrap();
             context.inner().bind_texture(glow::TEXTURE_2D, Some(texture));
+            context.cache.borrow_mut().clear_bound_textures();
             context.inner().tex_image_2d(
                 glow::TEXTURE_2D,
                 0,
@@ -186,6 +187,7 @@ impl Texture2d {
         let texture = unsafe {
             let texture = context.inner().create_texture().unwrap();
             context.inner().bind_texture(glow::TEXTURE_2D, Some(texture));
+            context.cache.borrow_mut().clear_bound_textures();
             context.inner().tex_image_2d_with_html_image(
                 glow::TEXTURE_2D,
                 0,
@@ -242,6 +244,7 @@ impl Texture2d {
         let texture = unsafe {
             let texture = context.inner().create_texture().unwrap();
             context.inner().bind_texture(glow::TEXTURE_2D, Some(texture));
+            context.cache.borrow_mut().clear_bound_textures();
             context.inner().tex_image_2d(
                 glow::TEXTURE_2D,
                 0,
